@@ -1,0 +1,130 @@
+[
+  {
+    "id": "sample-1",
+    "name": "Sample Player 1",
+    "number": "1",
+    "position": "QB",
+    "positionGroup": "Offense",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-2",
+    "name": "Sample Player 2",
+    "number": "8",
+    "position": "RB",
+    "positionGroup": "Offense",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-3",
+    "name": "Sample Player 3",
+    "number": "15",
+    "position": "WR",
+    "positionGroup": "Offense",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-4",
+    "name": "Sample Player 4",
+    "number": "22",
+    "position": "WR",
+    "positionGroup": "Offense",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-5",
+    "name": "Sample Player 5",
+    "number": "29",
+    "position": "TE",
+    "positionGroup": "Offense",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-6",
+    "name": "Sample Player 6",
+    "number": "36",
+    "position": "OL",
+    "positionGroup": "Offense",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-7",
+    "name": "Sample Player 7",
+    "number": "43",
+    "position": "OL",
+    "positionGroup": "Offense",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-8",
+    "name": "Sample Player 8",
+    "number": "50",
+    "position": "DL",
+    "positionGroup": "Defense",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-9",
+    "name": "Sample Player 9",
+    "number": "57",
+    "position": "DL",
+    "positionGroup": "Defense",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-10",
+    "name": "Sample Player 10",
+    "number": "64",
+    "position": "LB",
+    "positionGroup": "Defense",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-11",
+    "name": "Sample Player 11",
+    "number": "71",
+    "position": "LB",
+    "positionGroup": "Defense",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-12",
+    "name": "Sample Player 12",
+    "number": "78",
+    "position": "CB",
+    "positionGroup": "Defense",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-13",
+    "name": "Sample Player 13",
+    "number": "85",
+    "position": "S",
+    "positionGroup": "Defense",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-14",
+    "name": "Sample Player 14",
+    "number": "92",
+    "position": "K",
+    "positionGroup": "Special Teams",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-15",
+    "name": "Sample Player 15",
+    "number": "99",
+    "position": "P",
+    "positionGroup": "Special Teams",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-16",
+    "name": "Sample Player 16",
+    "number": "7",
+    "position": "LS",
+    "positionGroup": "Special Teams",
+    "classYear": "Senior"
+  }
+]

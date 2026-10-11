@@ -1,0 +1,104 @@
+[
+  {
+    "id": "sample-game-1",
+    "date": "2026-09-05T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent A",
+    "homeAway": "home",
+    "venue": "Jordan-Hare Stadium · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-2",
+    "date": "2026-09-12T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent B",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-3",
+    "date": "2026-09-19T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent C",
+    "homeAway": "home",
+    "venue": "Jordan-Hare Stadium · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-4",
+    "date": "2026-09-26T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent D",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-5",
+    "date": "2026-10-03T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent E",
+    "homeAway": "home",
+    "venue": "Jordan-Hare Stadium · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-6",
+    "date": "2026-10-10T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent F",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-7",
+    "date": "2026-10-17T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent G",
+    "homeAway": "home",
+    "venue": "Jordan-Hare Stadium · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-8",
+    "date": "2026-10-24T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent H",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-9",
+    "date": "2026-10-31T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent I",
+    "homeAway": "home",
+    "venue": "Jordan-Hare Stadium · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-10",
+    "date": "2026-11-07T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent J",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-11",
+    "date": "2026-11-14T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent K",
+    "homeAway": "home",
+    "venue": "Jordan-Hare Stadium · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-game-12",
+    "date": "2026-11-21T23:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent L",
+    "homeAway": "away",
+    "status": "scheduled"
+  }
+]
