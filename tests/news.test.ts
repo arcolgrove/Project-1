@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { dedupeAndSort, getNews, isFootballStory, parseFeed } from "@/lib/news";
+import { dedupeAndSort, getNews, isFootballStory, isRelevant, parseFeed } from "@/lib/news";
 import type { NewsItem, NewsSource } from "@/lib/types";
 
 const fixture = (name: string) => readFileSync(join(__dirname, "fixtures", name), "utf8");
@@ -11,14 +11,14 @@ const googleSource: NewsSource = {
   name: "Google News",
   url: "https://news.google.com/rss",
   type: "media",
-  auburnOnly: true,
+  filter: "none",
 };
 const redditSource: NewsSource = {
   id: "reddit-wde",
   name: "r/wde (Reddit)",
   url: "https://www.reddit.com/r/wde/.rss",
   type: "social",
-  auburnOnly: false,
+  filter: "auburn-sports",
 };
 
 describe("parseFeed", () => {
@@ -53,10 +53,38 @@ describe("parseFeed", () => {
 
 describe("isFootballStory", () => {
   it("matches whole football terms only", () => {
-    expect(isFootballStory("Freeman talks QB battle")).toBe(true);
+    expect(isFootballStory("Golesh talks QB battle")).toBe(true);
     expect(isFootballStory("Iron Bowl week")).toBe(true);
     expect(isFootballStory("Auburn baseball sweeps series")).toBe(false);
     expect(isFootballStory("Committee approves budget")).toBe(false);
+  });
+});
+
+describe("isRelevant", () => {
+  const broad: NewsSource = { id: "v", name: "YouTube", url: "https://x", type: "video", filter: "broad" };
+
+  it("requires an Auburn mention for broad feeds", () => {
+    expect(isRelevant(broad, "PRESSER: Alex Golesh previews the Georgia game")).toBe(true);
+    expect(isRelevant(broad, "Monday LIVE: State of Clemson Football")).toBe(false);
+    expect(isRelevant(broad, "SGA Senate Meeting | Auburn University")).toBe(false);
+    expect(isRelevant(broad, "Auburn's 3 Keys to Survival vs Georgia Coming Out of the Bye")).toBe(true);
+    expect(isRelevant(broad, "Inside Auburn's Georgia Recruiting Push")).toBe(true);
+    expect(isRelevant(broad, "The schedule is set! @auburnsoccer is back home vs. Kentucky")).toBe(false);
+  });
+
+  it("drops other Auburn sports from all-sports feeds", () => {
+    expect(isRelevant(redditSource, "Bowers defends ITA Southern Regional tennis title")).toBe(false);
+    expect(isRelevant(redditSource, "Monday thoughts from Auburn football and Auburn basketball")).toBe(true);
+  });
+
+  it("requires a football term for strict feeds", () => {
+    const official: NewsSource = { ...googleSource, type: "official", filter: "football" };
+    expect(isRelevant(official, "Missouri defeats Auburn in comeback fashion")).toBe(false);
+    expect(isRelevant(official, "AU FB Game Notes 2026_6 Georgia.pdf")).toBe(true);
+  });
+
+  it("skips filtering for Auburn-football-only feeds", () => {
+    expect(isRelevant(googleSource, "Tigers prep for road trip")).toBe(true);
   });
 });
 
