@@ -34,6 +34,8 @@ const FOOTBALL_TERMS = [
   "transfer portal",
   "freeman",
   "iron bowl",
+  "game thread",
+  "postgame",
   "jordan-hare",
   "bowl game",
   "depth chart",
@@ -90,6 +92,10 @@ function splitGoogleTitle(title: string): { title: string; outlet?: string } {
   return { title: title.slice(0, idx), outlet: title.slice(idx + 3) };
 }
 
+function isGoogleNews(source: NewsSource): boolean {
+  return source.url.startsWith("https://news.google.com/");
+}
+
 export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsItem[] {
   const out: NewsItem[] = [];
   for (const item of items) {
@@ -99,7 +105,7 @@ export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsI
 
     let title = stripHtml(item.title);
     let sourceName = source.name;
-    if (source.id === "google-news") {
+    if (isGoogleNews(source)) {
       const split = splitGoogleTitle(title);
       title = split.title;
       sourceName = split.outlet ?? source.name;
@@ -109,7 +115,7 @@ export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsI
       item.contentSnippet ?? item["media:group"]?.["media:description"]?.[0] ?? item.content ?? "";
     let summary = truncate(stripHtml(rawSummary));
     // Google News snippets just repeat the headline and outlet.
-    if (source.id === "google-news" || summary.startsWith(title)) summary = "";
+    if (isGoogleNews(source) || summary.startsWith(title)) summary = "";
 
     if (!source.auburnOnly && !isFootballStory(`${title} ${summary}`)) continue;
 
@@ -161,6 +167,8 @@ export function dedupeAndSort(items: NewsItem[]): NewsItem[] {
 
 export async function parseFeed(source: NewsSource, xml: string): Promise<NewsItem[]> {
   const feed = await parser.parseString(xml);
+  // A feed with no entries at all is almost always a block page or a moved URL.
+  if (feed.items.length === 0) throw new Error(`${source.id}: feed has no items`);
   return normalizeFeedItems(source, feed.items);
 }
 

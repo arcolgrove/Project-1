@@ -34,6 +34,11 @@ describe("parseFeed", () => {
     expect(items[0].summary).toBeUndefined();
   });
 
+  it("treats a feed with no entries as a failure", async () => {
+    const empty = '<?xml version="1.0"?><rss version="2.0"><channel><title>x</title></channel></rss>';
+    await expect(parseFeed(googleSource, empty)).rejects.toThrow("no items");
+  });
+
   it("filters non-football stories from general feeds and reads Atom thumbnails", async () => {
     const items = await parseFeed(redditSource, fixture("reddit.xml"));
     expect(items).toHaveLength(1);
