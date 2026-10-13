@@ -20,7 +20,7 @@ npm run build && npm start
 ```
 
 ## Adding or changing news sources
-Edit `lib/sources.ts`. Each source has a `type` (`media`, `official`, `social`, `video`) and an `auburnOnly` flag: feeds that cover only Auburn football skip the keyword filter; broader feeds (e.g. all Auburn sports) are filtered with the football terms in `lib/news.ts`.
+Edit `lib/sources.ts`. Each source has a `type` (`media`, `official`, `social`, `video`) and a `filter` (documented on `NewsSource` in `lib/types.ts`) that controls how strictly items are checked for being about Auburn football. The terms live in `lib/news.ts`. Outlets whose own feeds fail from Vercel are reached through site-scoped Google News searches.
 
 ## Project layout
 ```

@@ -5,8 +5,14 @@ export interface NewsSource {
   name: string;
   url: string;
   type: SourceType;
-  /** Feeds that only cover Auburn football skip the relevance filter. */
-  auburnOnly: boolean;
+  /**
+   * Relevance filter applied to each item:
+   * - "none": the feed only covers Auburn football.
+   * - "football": items must use a football term (feeds whose headlines rarely name the sport).
+   * - "auburn-sports": an all-sports Auburn feed; drop items about other sports.
+   * - "broad": items must mention Auburn, then are filtered like "auburn-sports".
+   */
+  filter: "none" | "football" | "auburn-sports" | "broad";
 }
 
 export interface NewsItem {

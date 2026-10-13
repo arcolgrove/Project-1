@@ -30,9 +30,15 @@ const FOOTBALL_TERMS = [
   "qb",
   "touchdown",
   "recruit",
+  "recruits",
+  "recruiting",
   "commit",
+  "commits",
+  "commitment",
   "transfer portal",
-  "freeman",
+  "golesh",
+  "fb",
+  "bye week",
   "iron bowl",
   "game thread",
   "postgame",
@@ -48,11 +54,57 @@ const FOOTBALL_TERMS = [
   "college football playoff",
 ];
 
+/**
+ * Signs a story is about another Auburn sport or campus life. Matched as plain
+ * substrings so handles like "@auburnsoccer" count too.
+ */
+const OTHER_TOPICS = [
+  "basketball",
+  "hoops",
+  "baseball",
+  "softball",
+  "soccer",
+  "volleyball",
+  "tennis",
+  "golf",
+  "gymnastics",
+  "swim",
+  "track & field",
+  "track and field",
+  "cross country",
+  "equestrian",
+  "sga",
+  "senate",
+];
+
+const AUBURN_PATTERN = /\bauburn\b|\bwar eagle\b|\bgolesh\b/i;
+
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 export function isFootballStory(text: string): boolean {
   const lower = text.toLowerCase();
-  return FOOTBALL_TERMS.some((term) =>
-    new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(lower),
-  );
+  return FOOTBALL_TERMS.some((term) => new RegExp(`\\b${escapeRegExp(term)}\\b`).test(lower));
+}
+
+function isOtherTopic(text: string): boolean {
+  const lower = text.toLowerCase();
+  return OTHER_TOPICS.some((topic) => lower.includes(topic));
+}
+
+/** Applies the source's relevance filter; see `NewsSource.filter`. */
+export function isRelevant(source: NewsSource, text: string): boolean {
+  switch (source.filter) {
+    case "none":
+      return true;
+    case "football":
+      return isFootballStory(text);
+    case "broad":
+      if (!AUBURN_PATTERN.test(text)) return false;
+    // falls through
+    case "auburn-sports":
+      // Many football headlines never say "football" (e.g. "Auburn's 3 keys vs Georgia").
+      return isFootballStory(text) || !isOtherTopic(text);
+  }
 }
 
 function stripHtml(html: string): string {
@@ -108,8 +160,11 @@ export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsI
     if (isGoogleNews(source)) {
       const split = splitGoogleTitle(title);
       title = split.title;
-      sourceName = split.outlet ?? source.name;
+      // Official results are all from AuburnTigers.com; keep that name over Google's outlet label.
+      if (source.type !== "official") sourceName = split.outlet ?? source.name;
     }
+    // Social posts arrive with the whole caption as the title.
+    title = truncate(title, 200);
 
     const rawSummary =
       item.contentSnippet ?? item["media:group"]?.["media:description"]?.[0] ?? item.content ?? "";
@@ -117,7 +172,7 @@ export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsI
     // Google News snippets just repeat the headline and outlet.
     if (isGoogleNews(source) || summary.startsWith(title)) summary = "";
 
-    if (!source.auburnOnly && !isFootballStory(`${title} ${summary}`)) continue;
+    if (/^download pdf$/i.test(title) || !isRelevant(source, `${title} ${summary}`)) continue;
 
     out.push({
       id: `${source.id}:${item.guid ?? item.id ?? item.link}`,
