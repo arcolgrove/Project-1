@@ -22,6 +22,13 @@ npm run build && npm start
 ## Adding or changing news sources
 Edit `lib/sources.ts`. Each source has a `type` (`media`, `official`, `social`, `video`) and a `filter` (documented on `NewsSource` in `lib/types.ts`) that controls how strictly items are checked for being about Auburn football. The terms live in `lib/news.ts`. Outlets whose own feeds fail from Vercel are reached through site-scoped Google News searches.
 
+## Offline and install
+`public/sw.js` is a small service worker, registered in production builds only (`components/RegisterServiceWorker.tsx`).
+- **Pages:** fetched from the network first. When offline, the last saved copy is shown, or `/offline` for a page that was never opened.
+- **Build assets:** served from the cache.
+
+Together with `app/manifest.ts`, this makes the site installable ("Install app" in Chrome, "Add to Home Screen" in Safari). When you change the worker's caching, bump `CACHE_VERSION` in `sw.js` so old caches are cleared.
+
 ## Project layout
 ```
 app/            pages (news, schedule, roster), API route, PWA manifest
