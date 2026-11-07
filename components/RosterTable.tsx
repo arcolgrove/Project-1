@@ -3,10 +3,8 @@
 import { useMemo, useState } from "react";
 import type { Player } from "@/lib/types";
 
-const GROUPS = ["All", "Offense", "Defense", "Special Teams"] as const;
-
-export default function RosterTable({ players }: { players: Player[] }) {
-  const [group, setGroup] = useState<(typeof GROUPS)[number]>("All");
+export default function RosterTable({ players, groups }: { players: Player[]; groups: string[] }) {
+  const [group, setGroup] = useState("All");
   const [query, setQuery] = useState("");
 
   const visible = useMemo(() => {
@@ -20,8 +18,8 @@ export default function RosterTable({ players }: { players: Player[] }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by unit">
-          {GROUPS.map((g) => (
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by position">
+          {["All", ...groups].map((g) => (
             <button
               key={g}
               onClick={() => setGroup(g)}

@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      // Football is the default sport for now; temporary so it can change.
+      { source: "/", destination: "/football", permanent: false },
+      // Pages from before the site covered more than one sport.
+      { source: "/schedule", destination: "/football/schedule", permanent: true },
+      { source: "/roster", destination: "/football/roster", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

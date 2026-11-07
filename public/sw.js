@@ -1,13 +1,12 @@
-// Service worker for Auburn Football Hub: lets the site open offline and be installed.
+// Service worker for Auburn Sports Hub: lets the site open offline and be installed.
 // Bump CACHE_VERSION whenever this file's caching behavior changes.
-const CACHE_VERSION = "v1";
-const CACHE = `au-football-${CACHE_VERSION}`;
+const CACHE_VERSION = "v2";
+const CACHE = `au-sports-${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline";
 
+const SPORTS = ["football", "basketball"]; // keep in sync with lib/sports.ts
 const PRECACHE = [
-  "/",
-  "/schedule",
-  "/roster",
+  ...SPORTS.flatMap((sport) => [`/${sport}`, `/${sport}/schedule`, `/${sport}/roster`]),
   OFFLINE_URL,
   "/manifest.webmanifest",
   "/icon.svg",

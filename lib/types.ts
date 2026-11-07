@@ -7,12 +7,12 @@ export interface NewsSource {
   type: SourceType;
   /**
    * Relevance filter applied to each item:
-   * - "none": the feed only covers Auburn football.
-   * - "football": items must use a football term (feeds whose headlines rarely name the sport).
+   * - "none": the feed only covers this Auburn sport.
+   * - "sport": items must use one of the sport's terms (feeds whose headlines rarely name the sport).
    * - "auburn-sports": an all-sports Auburn feed; drop items about other sports.
    * - "broad": items must mention Auburn, then are filtered like "auburn-sports".
    */
-  filter: "none" | "football" | "auburn-sports" | "broad";
+  filter: "none" | "sport" | "auburn-sports" | "broad";
 }
 
 export interface NewsItem {
@@ -37,7 +37,8 @@ export interface Player {
   name: string;
   number?: string;
   position: string;
-  positionGroup: "Offense" | "Defense" | "Special Teams";
+  /** Roster filter group, from the sport's config (e.g. "Offense", "Guards"). */
+  positionGroup: string;
   classYear?: string;
   height?: string;
   weight?: string;

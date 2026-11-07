@@ -1,0 +1,106 @@
+[
+  {
+    "id": "sample-bb-1",
+    "name": "Sample Player 1",
+    "number": "1",
+    "position": "PG",
+    "positionGroup": "Guards",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bb-2",
+    "name": "Sample Player 2",
+    "number": "4",
+    "position": "SG",
+    "positionGroup": "Guards",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bb-3",
+    "name": "Sample Player 3",
+    "number": "7",
+    "position": "G",
+    "positionGroup": "Guards",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bb-4",
+    "name": "Sample Player 4",
+    "number": "10",
+    "position": "G",
+    "positionGroup": "Guards",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bb-5",
+    "name": "Sample Player 5",
+    "number": "13",
+    "position": "SF",
+    "positionGroup": "Forwards",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bb-6",
+    "name": "Sample Player 6",
+    "number": "16",
+    "position": "F",
+    "positionGroup": "Forwards",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bb-7",
+    "name": "Sample Player 7",
+    "number": "19",
+    "position": "F",
+    "positionGroup": "Forwards",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bb-8",
+    "name": "Sample Player 8",
+    "number": "22",
+    "position": "PF",
+    "positionGroup": "Forwards",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bb-9",
+    "name": "Sample Player 9",
+    "number": "25",
+    "position": "PF",
+    "positionGroup": "Forwards",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bb-10",
+    "name": "Sample Player 10",
+    "number": "28",
+    "position": "C",
+    "positionGroup": "Centers",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bb-11",
+    "name": "Sample Player 11",
+    "number": "31",
+    "position": "C",
+    "positionGroup": "Centers",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bb-12",
+    "name": "Sample Player 12",
+    "number": "34",
+    "position": "G",
+    "positionGroup": "Guards",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bb-13",
+    "name": "Sample Player 13",
+    "number": "2",
+    "position": "F",
+    "positionGroup": "Forwards",
+    "classYear": "Freshman"
+  }
+]
