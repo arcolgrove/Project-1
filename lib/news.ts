@@ -49,7 +49,12 @@ const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export function isSportStory(text: string, sport: SportId): boolean {
   const lower = text.toLowerCase();
-  return SPORTS[sport].terms.some((term) => new RegExp(`\\b${escapeRegExp(term)}\\b`).test(lower));
+  const { terms, markers } = SPORTS[sport];
+  return (
+    // Markers count anywhere, so hashtags like "#AuburnBasketball" match.
+    markers.some((marker) => lower.includes(marker)) ||
+    terms.some((term) => new RegExp(`\\b${escapeRegExp(term)}\\b`).test(lower))
+  );
 }
 
 function otherTopics(sport: SportId): string[] {
@@ -64,6 +69,8 @@ function isOtherTopic(text: string, sport: SportId): boolean {
 
 /** Applies the source's relevance filter for a sport; see `NewsSource.filter`. */
 export function isRelevant(source: NewsSource, text: string, sport: SportId): boolean {
+  const lower = text.toLowerCase();
+  if (SPORTS[sport].excludes.some((ex) => lower.includes(ex))) return false;
   switch (source.filter) {
     case "none":
       return true;
@@ -73,8 +80,8 @@ export function isRelevant(source: NewsSource, text: string, sport: SportId): bo
       if (!SPORTS[sport].auburnPattern.test(text)) return false;
     // falls through
     case "auburn-sports":
-      // Many headlines never name the sport (e.g. "Auburn's 3 keys vs Georgia").
-      return isSportStory(text, sport) || !isOtherTopic(text, sport);
+      // Many football headlines never name the sport (e.g. "Auburn's 3 keys vs Georgia").
+      return isSportStory(text, sport) || (SPORTS[sport].lenient && !isOtherTopic(text, sport));
   }
 }
 
