@@ -2,10 +2,11 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Auburn Football Hub",
-    short_name: "AU Football",
-    description: "Latest Auburn Tigers football news, roster and schedule.",
-    start_url: "/",
+    name: "Auburn Sports Hub",
+    short_name: "AU Sports",
+    description: "Latest Auburn Tigers football and men's basketball news, rosters and schedules.",
+    // Open a real page, not the "/" redirect, so the installed app also starts offline.
+    start_url: "/football",
     display: "standalone",
     background_color: "#0c2340",
     theme_color: "#0c2340",

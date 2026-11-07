@@ -2,10 +2,14 @@ import type { Metadata } from "next";
 import Notice from "@/components/Notice";
 import { getSchedule } from "@/lib/espn";
 import { gameDate, gameTime } from "@/lib/format";
+import { sportFromParams, type SportParams } from "@/lib/route-params";
 import type { Game } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Schedule" };
 export const revalidate = 3600;
+
+export async function generateMetadata(props: SportParams): Promise<Metadata> {
+  return { title: `${(await sportFromParams(props)).name} Schedule` };
+}
 
 function Matchup({ game }: { game: Game }) {
   const prefix = game.homeAway === "away" ? "at" : game.homeAway === "neutral" ? "vs (N)" : "vs";
@@ -49,8 +53,9 @@ function Outcome({ game }: { game: Game }) {
   );
 }
 
-export default async function SchedulePage() {
-  const { data: games, isFallback } = await getSchedule();
+export default async function SchedulePage(props: SportParams) {
+  const sport = await sportFromParams(props);
+  const { data: games, isFallback } = await getSchedule(sport.id);
   const finals = games.filter((g) => g.status === "final" && g.result);
   const wins = finals.filter((g) => g.result!.win).length;
   const next = games.find((g) => g.status !== "final");
@@ -58,7 +63,7 @@ export default async function SchedulePage() {
   return (
     <>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-        <h1 className="text-2xl font-extrabold tracking-tight">Schedule</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">{sport.name} Schedule</h1>
         {finals.length > 0 && (
           <p className="text-sm font-semibold">
             Record: {wins}–{finals.length - wins}

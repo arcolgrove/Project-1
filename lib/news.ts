@@ -1,5 +1,5 @@
 import Parser from "rss-parser";
-import { NEWS_SOURCES } from "./sources";
+import { SPORT_IDS, SPORTS, type SportId } from "./sports";
 import type { NewsItem, NewsResult, NewsSource } from "./types";
 
 const FEED_TIMEOUT_MS = 8000;
@@ -23,44 +23,12 @@ const parser: Parser<Record<string, unknown>, FeedItem> = new Parser({
   },
 });
 
-/** Terms that mark a story from a general Auburn feed as being about football. */
-const FOOTBALL_TERMS = [
-  "football",
-  "quarterback",
-  "qb",
-  "touchdown",
-  "recruit",
-  "recruits",
-  "recruiting",
-  "commit",
-  "commits",
-  "commitment",
-  "transfer portal",
-  "golesh",
-  "fb",
-  "bye week",
-  "iron bowl",
-  "game thread",
-  "postgame",
-  "jordan-hare",
-  "bowl game",
-  "depth chart",
-  "kickoff",
-  "wide receiver",
-  "linebacker",
-  "defensive coordinator",
-  "offensive coordinator",
-  "sec championship",
-  "college football playoff",
-];
-
 /**
  * Signs a story is about another Auburn sport or campus life. Matched as plain
- * substrings so handles like "@auburnsoccer" count too.
+ * substrings so handles like "@auburnsoccer" count too. Sports the site covers
+ * add their own markers (see `otherTopics`).
  */
-const OTHER_TOPICS = [
-  "basketball",
-  "hoops",
+const NON_SITE_TOPICS = [
   "baseball",
   "softball",
   "soccer",
@@ -77,33 +45,36 @@ const OTHER_TOPICS = [
   "senate",
 ];
 
-const AUBURN_PATTERN = /\bauburn\b|\bwar eagle\b|\bgolesh\b/i;
-
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-export function isFootballStory(text: string): boolean {
+export function isSportStory(text: string, sport: SportId): boolean {
   const lower = text.toLowerCase();
-  return FOOTBALL_TERMS.some((term) => new RegExp(`\\b${escapeRegExp(term)}\\b`).test(lower));
+  return SPORTS[sport].terms.some((term) => new RegExp(`\\b${escapeRegExp(term)}\\b`).test(lower));
 }
 
-function isOtherTopic(text: string): boolean {
-  const lower = text.toLowerCase();
-  return OTHER_TOPICS.some((topic) => lower.includes(topic));
+function otherTopics(sport: SportId): string[] {
+  const otherSports = SPORT_IDS.filter((id) => id !== sport).flatMap((id) => SPORTS[id].markers);
+  return [...NON_SITE_TOPICS, ...otherSports];
 }
 
-/** Applies the source's relevance filter; see `NewsSource.filter`. */
-export function isRelevant(source: NewsSource, text: string): boolean {
+function isOtherTopic(text: string, sport: SportId): boolean {
+  const lower = text.toLowerCase();
+  return otherTopics(sport).some((topic) => lower.includes(topic));
+}
+
+/** Applies the source's relevance filter for a sport; see `NewsSource.filter`. */
+export function isRelevant(source: NewsSource, text: string, sport: SportId): boolean {
   switch (source.filter) {
     case "none":
       return true;
-    case "football":
-      return isFootballStory(text);
+    case "sport":
+      return isSportStory(text, sport);
     case "broad":
-      if (!AUBURN_PATTERN.test(text)) return false;
+      if (!SPORTS[sport].auburnPattern.test(text)) return false;
     // falls through
     case "auburn-sports":
-      // Many football headlines never say "football" (e.g. "Auburn's 3 keys vs Georgia").
-      return isFootballStory(text) || !isOtherTopic(text);
+      // Many headlines never name the sport (e.g. "Auburn's 3 keys vs Georgia").
+      return isSportStory(text, sport) || !isOtherTopic(text, sport);
   }
 }
 
@@ -148,7 +119,7 @@ function isGoogleNews(source: NewsSource): boolean {
   return source.url.startsWith("https://news.google.com/");
 }
 
-export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsItem[] {
+export function normalizeFeedItems(source: NewsSource, items: FeedItem[], sport: SportId): NewsItem[] {
   const out: NewsItem[] = [];
   for (const item of items) {
     if (!item.title || !item.link) continue;
@@ -172,7 +143,7 @@ export function normalizeFeedItems(source: NewsSource, items: FeedItem[]): NewsI
     // Google News snippets just repeat the headline and outlet.
     if (isGoogleNews(source) || summary.startsWith(title)) summary = "";
 
-    if (/^download pdf$/i.test(title) || !isRelevant(source, `${title} ${summary}`)) continue;
+    if (/^download pdf$/i.test(title) || !isRelevant(source, `${title} ${summary}`, sport)) continue;
 
     out.push({
       id: `${source.id}:${item.guid ?? item.id ?? item.link}`,
@@ -220,25 +191,25 @@ export function dedupeAndSort(items: NewsItem[]): NewsItem[] {
   });
 }
 
-export async function parseFeed(source: NewsSource, xml: string): Promise<NewsItem[]> {
+export async function parseFeed(source: NewsSource, xml: string, sport: SportId): Promise<NewsItem[]> {
   const feed = await parser.parseString(xml);
   // A feed with no entries at all is almost always a block page or a moved URL.
   if (feed.items.length === 0) throw new Error(`${source.id}: feed has no items`);
-  return normalizeFeedItems(source, feed.items);
+  return normalizeFeedItems(source, feed.items, sport);
 }
 
-async function fetchSource(source: NewsSource): Promise<NewsItem[]> {
+async function fetchSource(source: NewsSource, sport: SportId): Promise<NewsItem[]> {
   const res = await fetch(source.url, {
-    headers: { "User-Agent": "AuburnFootballHub/1.0 (+news aggregator)" },
+    headers: { "User-Agent": "AuburnSportsHub/1.0 (+news aggregator)" },
     signal: AbortSignal.timeout(FEED_TIMEOUT_MS),
     next: { revalidate: NEWS_REVALIDATE_SECONDS },
   });
   if (!res.ok) throw new Error(`${source.id}: HTTP ${res.status}`);
-  return parseFeed(source, await res.text());
+  return parseFeed(source, await res.text(), sport);
 }
 
-export async function getNews(sources: NewsSource[] = NEWS_SOURCES): Promise<NewsResult> {
-  const results = await Promise.allSettled(sources.map(fetchSource));
+export async function getNews(sport: SportId, sources: NewsSource[] = SPORTS[sport].sources): Promise<NewsResult> {
+  const results = await Promise.allSettled(sources.map((source) => fetchSource(source, sport)));
   const items: NewsItem[] = [];
   const failedSources: string[] = [];
   results.forEach((r, i) => {

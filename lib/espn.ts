@@ -1,10 +1,20 @@
-import rosterFallback from "@/data/roster-fallback.json";
-import scheduleFallback from "@/data/schedule-fallback.json";
+import basketballRoster from "@/data/basketball-roster.json";
+import basketballSchedule from "@/data/basketball-schedule.json";
+import footballRoster from "@/data/football-roster.json";
+import footballSchedule from "@/data/football-schedule.json";
+import { SPORTS, type SportId } from "./sports";
 import type { DataResult, Game, Player } from "./types";
 
-/** ESPN's team id for Auburn. These are ESPN's public (unofficial) site endpoints. */
+/** ESPN's team id for Auburn (the same for every sport). These are ESPN's public (unofficial) site endpoints. */
 export const AUBURN_ESPN_ID = "2";
-const BASE = `https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/${AUBURN_ESPN_ID}`;
+const teamUrl = (sport: SportId) =>
+  `https://site.api.espn.com/apis/site/v2/sports/${SPORTS[sport].espnPath}/teams/${AUBURN_ESPN_ID}`;
+
+/** Placeholder data shown, with a notice, when ESPN can't be reached. */
+const FALLBACK: Record<SportId, { roster: Player[]; schedule: Game[] }> = {
+  football: { roster: footballRoster, schedule: footballSchedule as Game[] },
+  basketball: { roster: basketballRoster, schedule: basketballSchedule as Game[] },
+};
 const TIMEOUT_MS = 8000;
 
 // Loose shapes of the ESPN payloads; every field is treated as optional.
@@ -42,22 +52,24 @@ interface EspnEvent {
   }[];
 }
 
-const GROUP_LABELS: Record<string, Player["positionGroup"]> = {
-  offense: "Offense",
-  defense: "Defense",
-  specialteam: "Special Teams",
-  specialteams: "Special Teams",
-};
+type EspnGroup = { position?: string; items?: EspnAthlete[] };
 
-export function normalizeRoster(json: unknown): Player[] {
-  const groups = (json as { athletes?: { position?: string; items?: EspnAthlete[] }[] })?.athletes;
-  if (!Array.isArray(groups)) throw new Error("Unexpected roster payload");
+/**
+ * ESPN returns football rosters grouped by unit (`athletes: [{ position, items }]`)
+ * and basketball rosters as a flat list (`athletes: [athlete]`); accept both.
+ */
+export function normalizeRoster(json: unknown, sport: SportId): Player[] {
+  const athletes = (json as { athletes?: (EspnAthlete | EspnGroup)[] })?.athletes;
+  if (!Array.isArray(athletes)) throw new Error("Unexpected roster payload");
+  const groups: EspnGroup[] = athletes.some((a) => "items" in a)
+    ? (athletes as EspnGroup[])
+    : [{ items: athletes as EspnAthlete[] }];
   const players: Player[] = [];
   for (const group of groups) {
-    const positionGroup = GROUP_LABELS[(group.position ?? "").toLowerCase()] ?? "Special Teams";
     for (const a of group.items ?? []) {
       const name = a.fullName ?? a.displayName;
       if (!a.id || !name) continue;
+      const position = a.position?.abbreviation ?? "—";
       const hometown = [a.birthPlace?.city, a.birthPlace?.state ?? a.birthPlace?.country]
         .filter(Boolean)
         .join(", ");
@@ -65,8 +77,8 @@ export function normalizeRoster(json: unknown): Player[] {
         id: a.id,
         name,
         number: a.jersey,
-        position: a.position?.abbreviation ?? "—",
-        positionGroup,
+        position,
+        positionGroup: SPORTS[sport].groupOf(position, group.position),
         classYear: a.experience?.displayValue,
         height: a.displayHeight,
         weight: a.displayWeight,
@@ -121,12 +133,12 @@ export function normalizeSchedule(json: unknown): Game[] {
   return games.sort((a, b) => a.date.localeCompare(b.date));
 }
 
-async function fetchJson(path: string, revalidate: number): Promise<unknown> {
-  const res = await fetch(`${BASE}${path}`, {
+async function fetchJson(sport: SportId, path: string, revalidate: number): Promise<unknown> {
+  const res = await fetch(`${teamUrl(sport)}${path}`, {
     signal: AbortSignal.timeout(TIMEOUT_MS),
     next: { revalidate },
   });
-  if (!res.ok) throw new Error(`ESPN ${path}: HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`ESPN ${sport}${path}: HTTP ${res.status}`);
   return res.json();
 }
 
@@ -141,18 +153,18 @@ async function withFallback<T>(load: () => Promise<T>, fallback: T, label: strin
   }
 }
 
-export function getRoster(): Promise<DataResult<Player[]>> {
+export function getRoster(sport: SportId): Promise<DataResult<Player[]>> {
   return withFallback(
-    async () => normalizeRoster(await fetchJson("/roster", 86400)),
-    rosterFallback as Player[],
-    "roster",
+    async () => normalizeRoster(await fetchJson(sport, "/roster", 86400), sport),
+    FALLBACK[sport].roster,
+    `${sport} roster`,
   );
 }
 
-export function getSchedule(): Promise<DataResult<Game[]>> {
+export function getSchedule(sport: SportId): Promise<DataResult<Game[]>> {
   return withFallback(
-    async () => normalizeSchedule(await fetchJson("/schedule", 3600)),
-    scheduleFallback as Game[],
-    "schedule",
+    async () => normalizeSchedule(await fetchJson(sport, "/schedule", 3600)),
+    FALLBACK[sport].schedule,
+    `${sport} schedule`,
   );
 }

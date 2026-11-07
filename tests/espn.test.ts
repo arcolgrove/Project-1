@@ -61,7 +61,7 @@ const schedulePayload = {
 
 describe("normalizeRoster", () => {
   it("maps ESPN athletes into players", () => {
-    const players = normalizeRoster(rosterPayload);
+    const players = normalizeRoster(rosterPayload, "football");
     expect(players).toHaveLength(2);
     expect(players[0]).toMatchObject({
       name: "Test Quarterback",
@@ -75,7 +75,25 @@ describe("normalizeRoster", () => {
   });
 
   it("rejects unexpected payloads", () => {
-    expect(() => normalizeRoster({})).toThrow();
+    expect(() => normalizeRoster({}, "football")).toThrow();
+  });
+});
+
+describe("normalizeRoster (basketball)", () => {
+  it("reads ESPN's flat basketball roster and groups by position", () => {
+    const payload = {
+      athletes: [
+        { id: "1", fullName: "Test Guard", jersey: "3", position: { abbreviation: "G" } },
+        { id: "2", fullName: "Test Forward", jersey: "21", position: { abbreviation: "F" } },
+        { id: "3", fullName: "Test Center", jersey: "50", position: { abbreviation: "C" } },
+      ],
+    };
+    const players = normalizeRoster(payload, "basketball");
+    expect(players.map((p) => [p.name, p.positionGroup])).toEqual([
+      ["Test Guard", "Guards"],
+      ["Test Forward", "Forwards"],
+      ["Test Center", "Centers"],
+    ]);
   });
 });
 
@@ -107,15 +125,25 @@ describe("fallback", () => {
   it("serves bundled sample data when ESPN is unreachable", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")));
     vi.spyOn(console, "warn").mockImplementation(() => {});
-    const [roster, schedule] = await Promise.all([getRoster(), getSchedule()]);
+    const [roster, schedule] = await Promise.all([getRoster("football"), getSchedule("football")]);
     expect(roster.isFallback).toBe(true);
     expect(roster.data.length).toBeGreaterThan(0);
     expect(schedule.isFallback).toBe(true);
   });
 
+  it("serves basketball sample data from the basketball endpoint's fallback", async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new Error("network down"));
+    vi.stubGlobal("fetch", fetchMock);
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const roster = await getRoster("basketball");
+    expect(String(fetchMock.mock.calls[0][0])).toContain("/basketball/mens-college-basketball/teams/2/roster");
+    expect(roster.isFallback).toBe(true);
+    expect(roster.data.every((p) => ["Guards", "Forwards", "Centers"].includes(p.positionGroup))).toBe(true);
+  });
+
   it("uses live data when ESPN responds", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Response.json(rosterPayload)));
-    const roster = await getRoster();
+    const roster = await getRoster("football");
     expect(roster.isFallback).toBe(false);
     expect(roster.data[0].name).toBe("Test Quarterback");
   });
