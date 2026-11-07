@@ -21,6 +21,15 @@ export interface SportConfig {
   markers: string[];
   /** Mentions that tie a broad search result to Auburn. */
   auburnPattern: RegExp;
+  /**
+   * Whether all-sports and broad feeds may keep an Auburn story that names no
+   * sport. True for football, whose headlines often don't say "football" and
+   * dominate those feeds in the fall; false for sports that would otherwise
+   * pick up football stories.
+   */
+  lenient: boolean;
+  /** Substrings that drop a story from every source, e.g. another team in the same sport. */
+  excludes: string[];
   /** Roster filter chips, in display order. */
   positionGroups: string[];
   /** Maps an ESPN position abbreviation (and football's unit key) to a roster group. */
@@ -136,6 +145,8 @@ export const SPORTS: Record<SportId, SportConfig> = {
     ],
     markers: ["football"],
     auburnPattern: /\bauburn\b|\bwar eagle\b|\bgolesh\b/i,
+    lenient: true,
+    excludes: [],
     positionGroups: ["Offense", "Defense", "Special Teams"],
     groupOf: (_position, espnGroup) => FOOTBALL_UNITS[(espnGroup ?? "").toLowerCase()] ?? "Special Teams",
   },
@@ -149,6 +160,7 @@ export const SPORTS: Record<SportId, SportConfig> = {
       "basketball",
       "hoops",
       "mbb",
+      "pearl",
       "neville arena",
       "tip-off",
       "tipoff",
@@ -168,7 +180,10 @@ export const SPORTS: Record<SportId, SportConfig> = {
       "bracketology",
     ],
     markers: ["basketball", "hoops"],
-    auburnPattern: /\bauburn\b|\bwar eagle\b/i,
+    auburnPattern: /\bauburn\b|\bwar eagle\b|\bpearl\b/i,
+    lenient: false,
+    // The site covers the men's team; AuburnTigers.com and Google results mix in the women's team.
+    excludes: ["women's basketball", "womens basketball", "women’s basketball", "wbb", "auburn women"],
     positionGroups: ["Guards", "Forwards", "Centers"],
     groupOf: (position) => BASKETBALL_GROUPS[position.toUpperCase()] ?? "Forwards",
   },

@@ -12,6 +12,7 @@ describe("sports config", () => {
     expect(sport.terms.length).toBeGreaterThan(0);
     expect(sport.markers.length).toBeGreaterThan(0);
     expect(sport.positionGroups.length).toBeGreaterThan(0);
+    expect(sport.excludes.every((ex) => ex === ex.toLowerCase())).toBe(true);
   });
 
   it("maps every basketball position to a listed group", () => {

@@ -64,6 +64,7 @@ describe("isSportStory", () => {
     expect(isSportStory("Tigers climb in latest bracketology", "basketball")).toBe(true);
     expect(isSportStory("Neville Arena sells out again", "basketball")).toBe(true);
     expect(isSportStory("Iron Bowl week", "basketball")).toBe(false);
+    expect(isSportStory("Game 1 ✅ #Auburn #AuburnBasketball #WarEagle", "basketball")).toBe(true);
   });
 });
 
@@ -96,6 +97,18 @@ describe("isRelevant", () => {
     expect(isRelevant(redditSource, "Auburn football depth chart released", "basketball")).toBe(false);
     expect(isRelevant(broad, "Auburn hoops lands top-50 guard", "basketball")).toBe(true);
     expect(isRelevant(broad, "Auburn hoops lands top-50 guard", "football")).toBe(false);
+  });
+
+  it("keeps unlabeled Auburn stories out of the basketball feed", () => {
+    expect(isRelevant(broad, "Auburn vs. Arkansas Preview: A MUST-WIN for the Tigers?", "football")).toBe(true);
+    expect(isRelevant(broad, "Auburn vs. Arkansas Preview: A MUST-WIN for the Tigers?", "basketball")).toBe(false);
+    expect(isRelevant(broad, "Steven Pearl on Auburn's win over Southeastern Louisiana", "basketball")).toBe(true);
+  });
+
+  it("drops the women's team from the men's basketball feed, even from unfiltered sources", () => {
+    expect(isRelevant(googleSource, "Peterson's double-double helps Auburn women defeat USM", "basketball")).toBe(false);
+    expect(isRelevant(googleSource, "AUBURN vs. SOUTHERN MISS Highlights | Women's Basketball", "basketball")).toBe(false);
+    expect(isRelevant(googleSource, "Auburn roars to 92-59 win over Southeastern Louisiana", "basketball")).toBe(true);
   });
 
   it("skips filtering for Auburn-football-only feeds", () => {
