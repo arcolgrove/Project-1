@@ -44,6 +44,16 @@ const NON_SITE_TOPICS = [
   "senate",
 ];
 
+/**
+ * Other places and schools called Auburn whose teams show up in "Auburn football"
+ * searches (e.g. Auburn, N.Y.'s high school in Section III).
+ */
+const OTHER_AUBURNS =
+  /section iii|\bauburn maroons\b|\bauburn high( school)?\b|\bmillbury\b|\bauburn, (n\.?y\.?|mass\.?|wash\.?|maine|ca(lif\.?)?)(\W|$)/i;
+
+/** Stories older than this are dropped; some feeds resurface evergreen pages from years ago. */
+export const MAX_AGE_DAYS = 30;
+
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export function isSportStory(text: string, sport: SportId): boolean {
@@ -69,7 +79,7 @@ function isOtherTopic(text: string, sport: SportId): boolean {
 /** Applies the source's relevance filter for a sport; see `NewsSource.filter`. */
 export function isRelevant(source: NewsSource, text: string, sport: SportId): boolean {
   const lower = text.toLowerCase();
-  if (SPORTS[sport].excludes.some((ex) => lower.includes(ex))) return false;
+  if (OTHER_AUBURNS.test(text) || SPORTS[sport].excludes.some((ex) => lower.includes(ex))) return false;
   switch (source.filter) {
     case "none":
       return true;
@@ -130,7 +140,7 @@ export function normalizeFeedItems(source: NewsSource, items: FeedItem[], sport:
   for (const item of items) {
     if (!item.title || !item.link) continue;
     const date = new Date(item.isoDate ?? item.pubDate ?? "");
-    if (Number.isNaN(date.getTime())) continue;
+    if (Number.isNaN(date.getTime()) || Date.now() - date.getTime() > MAX_AGE_DAYS * 864e5) continue;
 
     let title = stripHtml(item.title);
     let sourceName = source.name;
