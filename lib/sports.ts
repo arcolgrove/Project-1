@@ -9,8 +9,15 @@ export interface SportConfig {
   name: string;
   /** Short label for the sport switch. */
   shortName: string;
-  /** ESPN site API path segment; Auburn's team id is the same for every sport. */
+  /** ESPN site API path segment. */
   espnPath: string;
+  /** Auburn's ESPN team id in this sport's league (not the same in every sport). */
+  espnTeamId: string;
+  /**
+   * Set when ESPN has no usable current roster for this sport; the Roster page
+   * links to the official roster here instead.
+   */
+  officialRosterUrl?: string;
   sources: NewsSource[];
   /** Words that mark a story as being about this sport (whole-word match). */
   terms: string[];
@@ -50,7 +57,7 @@ const SOCIAL_SITES = "(site:x.com OR site:reddit.com OR site:instagram.com OR si
  * and YouTube fail or come back empty from Vercel, so those outlets are reached
  * through Google News instead.
  */
-function sourcesFor(sport: SportId, word: string): NewsSource[] {
+function sourcesFor(sport: SportId, word: string, mediaFilter: NewsSource["filter"] = "none"): NewsSource[] {
   return [
     {
       id: `${sport}-official`,
@@ -78,7 +85,7 @@ function sourcesFor(sport: SportId, word: string): NewsSource[] {
       name: "Google News",
       url: googleNews(`"Auburn ${word}"`),
       type: "media",
-      filter: "none",
+      filter: mediaFilter,
     },
     {
       id: `${sport}-reddit`,
@@ -132,6 +139,7 @@ export const SPORTS: Record<SportId, SportConfig> = {
     name: "Football",
     shortName: "Football",
     espnPath: "football/college-football",
+    espnTeamId: "2",
     sources: sourcesFor("football", "football"),
     terms: [
       "football",
@@ -174,6 +182,7 @@ export const SPORTS: Record<SportId, SportConfig> = {
     name: "Men's Basketball",
     shortName: "Basketball",
     espnPath: "basketball/mens-college-basketball",
+    espnTeamId: "2",
     sources: sourcesFor("basketball", "basketball"),
     terms: [
       "basketball",
@@ -211,7 +220,12 @@ export const SPORTS: Record<SportId, SportConfig> = {
     name: "Baseball",
     shortName: "Baseball",
     espnPath: "baseball/college-baseball",
-    sources: sourcesFor("baseball", "baseball"),
+    // In college baseball, id 2 is Mexico's national team.
+    espnTeamId: "55",
+    // ESPN's baseball "roster" is an all-time list (every jersey 0, former players, duplicates).
+    officialRosterUrl: "https://auburntigers.com/sports/baseball/roster",
+    // Off-season "Auburn baseball" searches return loose matches about the other sports.
+    sources: sourcesFor("baseball", "baseball", "sport"),
     // Words other sports share ("recruit", "regional", "SEC tournament") are left out
     // so their stories don't land here.
     terms: [
