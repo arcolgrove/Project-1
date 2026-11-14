@@ -1,0 +1,42 @@
+{
+ "athletes": [
+  {
+   "id": "28547",
+   "fullName": "Elliott Anderson",
+   "jersey": "0",
+   "position": {
+    "id": "99",
+    "name": "Unspecified Position",
+    "displayName": "Unspecified Position",
+    "abbreviation": "UN",
+    "leaf": true
+   }
+  },
+  {
+   "id": "26376",
+   "fullName": "Elliott (H) Anderson",
+   "jersey": "0",
+   "position": {
+    "id": "99",
+    "name": "Unspecified Position",
+    "displayName": "Unspecified Position",
+    "abbreviation": "UN",
+    "leaf": true
+   },
+   "displayHeight": "6' 3\""
+  },
+  {
+   "id": "16329",
+   "fullName": "Elliott (P) Anderson",
+   "jersey": "0",
+   "position": {
+    "id": "99",
+    "name": "Unspecified Position",
+    "displayName": "Unspecified Position",
+    "abbreviation": "UN",
+    "leaf": true
+   },
+   "displayHeight": "6' 3\""
+  }
+ ]
+}

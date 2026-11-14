@@ -6,6 +6,8 @@ import type { Player } from "@/lib/types";
 export default function RosterTable({ players, groups }: { players: Player[]; groups: string[] }) {
   const [group, setGroup] = useState("All");
   const [query, setQuery] = useState("");
+  // Only offer groups that have players; some ESPN rosters list no positions at all.
+  const usedGroups = groups.filter((g) => players.some((p) => p.positionGroup === g));
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -18,20 +20,22 @@ export default function RosterTable({ players, groups }: { players: Player[]; gr
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by position">
-          {["All", ...groups].map((g) => (
-            <button
-              key={g}
-              onClick={() => setGroup(g)}
-              aria-pressed={group === g}
-              className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
-                group === g ? "border-orange bg-orange text-navy" : "border-border bg-surface hover:border-orange"
-              }`}
-            >
-              {g}
-            </button>
-          ))}
-        </div>
+        {usedGroups.length > 0 && (
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by position">
+            {["All", ...usedGroups].map((g) => (
+              <button
+                key={g}
+                onClick={() => setGroup(g)}
+                aria-pressed={group === g}
+                className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+                  group === g ? "border-orange bg-orange text-navy" : "border-border bg-surface hover:border-orange"
+                }`}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        )}
         <input
           type="search"
           value={query}

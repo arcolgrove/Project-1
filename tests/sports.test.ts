@@ -42,6 +42,12 @@ describe("sports config", () => {
     expect(baseballRoster.every((p) => SPORTS.baseball.positionGroups.includes(p.positionGroup))).toBe(true);
   });
 
+  it("uses Auburn's ESPN team id for each league", () => {
+    expect(SPORTS.football.espnTeamId).toBe("2");
+    expect(SPORTS.basketball.espnTeamId).toBe("2");
+    expect(SPORTS.baseball.espnTeamId).toBe("55");
+  });
+
   it("recognizes sport ids", () => {
     expect(isSportId("football")).toBe(true);
     expect(isSportId("basketball")).toBe(true);

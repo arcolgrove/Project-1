@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import baseballRosterFixture from "./fixtures/espn-baseball-roster.json";
+import baseballScheduleFixture from "./fixtures/espn-baseball-schedule.json";
 import { getRoster, getSchedule, normalizeRoster, normalizeSchedule } from "@/lib/espn";
 
 const rosterPayload = {
@@ -97,9 +99,29 @@ describe("normalizeRoster (basketball)", () => {
   });
 });
 
+describe("ESPN baseball (real response samples)", () => {
+  it("finds Auburn by its baseball team id, not football's", () => {
+    const games = normalizeSchedule(baseballScheduleFixture, "baseball");
+    expect(games).toHaveLength(2);
+    expect(games[0]).toMatchObject({
+      opponent: "Youngstown State Penguins",
+      homeAway: "home",
+      status: "final",
+      result: { auburnScore: 2, opponentScore: 1, win: true },
+    });
+    // With football's id (2) nothing matches Auburn.
+    expect(normalizeSchedule(baseballScheduleFixture, "football")).toHaveLength(0);
+  });
+
+  it("treats ESPN's unspecified positions as unknown", () => {
+    const players = normalizeRoster(baseballRosterFixture, "baseball");
+    expect(players.every((p) => p.position === "—" && p.positionGroup === "")).toBe(true);
+  });
+});
+
 describe("normalizeSchedule", () => {
   it("sorts games and derives results from Auburn's perspective", () => {
-    const games = normalizeSchedule(schedulePayload);
+    const games = normalizeSchedule(schedulePayload, "football");
     expect(games.map((g) => g.id)).toEqual(["g1", "g2"]);
     expect(games[0]).toMatchObject({
       opponent: "Road Team",
@@ -147,11 +169,17 @@ describe("fallback", () => {
     vi.spyOn(console, "warn").mockImplementation(() => {});
     const [roster, schedule] = await Promise.all([getRoster("baseball"), getSchedule("baseball")]);
     const urls = fetchMock.mock.calls.map((c) => String(c[0]));
-    expect(urls).toContain("https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/2/roster");
+    expect(urls).toContain("https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/55/roster");
     expect(roster.isFallback && schedule.isFallback).toBe(true);
     expect(new Set(roster.data.map((p) => p.positionGroup))).toEqual(
       new Set(["Pitchers", "Catchers", "Infielders", "Outfielders", "Utility"]),
     );
+  });
+
+  it("reports an empty but valid answer as empty, not as sample data", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ events: [] })));
+    const schedule = await getSchedule("baseball");
+    expect(schedule).toEqual({ data: [], isFallback: false, isEmpty: true });
   });
 
   it("uses live data when ESPN responds", async () => {

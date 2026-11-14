@@ -7,10 +7,9 @@ import footballSchedule from "@/data/football-schedule.json";
 import { SPORTS, type SportId } from "./sports";
 import type { DataResult, Game, Player } from "./types";
 
-/** ESPN's team id for Auburn (the same for every sport). These are ESPN's public (unofficial) site endpoints. */
-export const AUBURN_ESPN_ID = "2";
+/** ESPN's public (unofficial) site endpoints for Auburn's team in a sport. */
 const teamUrl = (sport: SportId) =>
-  `https://site.api.espn.com/apis/site/v2/sports/${SPORTS[sport].espnPath}/teams/${AUBURN_ESPN_ID}`;
+  `https://site.api.espn.com/apis/site/v2/sports/${SPORTS[sport].espnPath}/teams/${SPORTS[sport].espnTeamId}`;
 
 /** Placeholder data shown, with a notice, when ESPN can't be reached. */
 const FALLBACK: Record<SportId, { roster: Player[]; schedule: Game[] }> = {
@@ -72,7 +71,9 @@ export function normalizeRoster(json: unknown, sport: SportId): Player[] {
     for (const a of group.items ?? []) {
       const name = a.fullName ?? a.displayName;
       if (!a.id || !name) continue;
-      const position = a.position?.abbreviation ?? "—";
+      // ESPN lists some rosters (e.g. baseball) with "UN" (unspecified) positions.
+      const abbr = a.position?.abbreviation;
+      const known = !!abbr && abbr !== "UN";
       const hometown = [a.birthPlace?.city, a.birthPlace?.state ?? a.birthPlace?.country]
         .filter(Boolean)
         .join(", ");
@@ -80,8 +81,8 @@ export function normalizeRoster(json: unknown, sport: SportId): Player[] {
         id: a.id,
         name,
         number: a.jersey,
-        position,
-        positionGroup: SPORTS[sport].groupOf(position, group.position),
+        position: known ? abbr : "—",
+        positionGroup: known ? SPORTS[sport].groupOf(abbr, group.position) : "",
         classYear: a.experience?.displayValue,
         height: a.displayHeight,
         weight: a.displayWeight,
@@ -100,14 +101,14 @@ function scoreOf(c: EspnCompetitor): number | undefined {
   return undefined;
 }
 
-export function normalizeSchedule(json: unknown): Game[] {
+export function normalizeSchedule(json: unknown, sport: SportId): Game[] {
   const events = (json as { events?: EspnEvent[] })?.events;
   if (!Array.isArray(events)) throw new Error("Unexpected schedule payload");
   const games: Game[] = [];
   for (const e of events) {
     const comp = e.competitions?.[0];
     const competitors = comp?.competitors ?? [];
-    const auburn = competitors.find((c) => (c.team?.id ?? c.id) === AUBURN_ESPN_ID);
+    const auburn = competitors.find((c) => (c.team?.id ?? c.id) === SPORTS[sport].espnTeamId);
     const opp = competitors.find((c) => c !== auburn);
     if (!e.id || !e.date || !auburn || !opp) continue;
 
@@ -148,7 +149,8 @@ async function fetchJson(sport: SportId, path: string, revalidate: number): Prom
 async function withFallback<T>(load: () => Promise<T>, fallback: T, label: string): Promise<DataResult<T>> {
   try {
     const data = await load();
-    if (Array.isArray(data) && data.length === 0) throw new Error("empty response");
+    // A valid but empty answer means nothing is published yet; say so rather than show samples.
+    if (Array.isArray(data) && data.length === 0) return { data, isFallback: false, isEmpty: true };
     return { data, isFallback: false };
   } catch (err) {
     console.warn(`[espn] ${label} unavailable, using bundled sample data:`, err);
@@ -166,7 +168,7 @@ export function getRoster(sport: SportId): Promise<DataResult<Player[]>> {
 
 export function getSchedule(sport: SportId): Promise<DataResult<Game[]>> {
   return withFallback(
-    async () => normalizeSchedule(await fetchJson(sport, "/schedule", 3600)),
+    async () => normalizeSchedule(await fetchJson(sport, "/schedule", 3600), sport),
     FALLBACK[sport].schedule,
     `${sport} schedule`,
   );

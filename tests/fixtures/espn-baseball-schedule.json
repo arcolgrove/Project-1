@@ -1,0 +1,107 @@
+{
+ "requestedSeason": {
+  "year": 2026,
+  "type": 2,
+  "name": "Regular Season",
+  "displayName": "2025-26"
+ },
+ "events": [
+  {
+   "id": "401847153",
+   "date": "2026-02-13T23:30Z",
+   "name": "Youngstown State Penguins at Auburn Tigers",
+   "timeValid": true,
+   "competitions": [
+    {
+     "neutralSite": false,
+     "status": {
+      "type": {
+       "state": "post",
+       "completed": true
+      }
+     },
+     "competitors": [
+      {
+       "id": "55",
+       "homeAway": "home",
+       "winner": true,
+       "score": {
+        "value": 2,
+        "displayValue": "2"
+       },
+       "team": {
+        "id": "55",
+        "displayName": "Auburn Tigers"
+       }
+      },
+      {
+       "id": "209",
+       "homeAway": "away",
+       "winner": false,
+       "score": {
+        "value": 1,
+        "displayValue": "1"
+       },
+       "team": {
+        "id": "209",
+        "displayName": "Youngstown State Penguins"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401873817",
+   "date": "2026-06-02T01:00Z",
+   "name": "Milwaukee Panthers at Auburn Tigers",
+   "timeValid": true,
+   "competitions": [
+    {
+     "neutralSite": false,
+     "venue": {
+      "fullName": "Plainsman Park",
+      "address": {
+       "city": "Auburn",
+       "state": "Alabama"
+      }
+     },
+     "status": {
+      "type": {
+       "state": "post",
+       "completed": true
+      }
+     },
+     "competitors": [
+      {
+       "id": "55",
+       "homeAway": "home",
+       "winner": true,
+       "score": {
+        "value": 8,
+        "displayValue": "8"
+       },
+       "team": {
+        "id": "55",
+        "displayName": "Auburn Tigers"
+       }
+      },
+      {
+       "id": "135",
+       "homeAway": "away",
+       "winner": false,
+       "score": {
+        "value": 3,
+        "displayValue": "3"
+       },
+       "team": {
+        "id": "135",
+        "displayName": "Milwaukee Panthers"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

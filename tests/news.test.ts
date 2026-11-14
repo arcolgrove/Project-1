@@ -126,6 +126,16 @@ describe("isRelevant", () => {
     expect(isRelevant(broad, "Auburn vs. Arkansas Preview: A MUST-WIN for the Tigers?", "baseball")).toBe(false);
   });
 
+  it("requires a baseball term even in the general baseball search", () => {
+    const media = SPORTS.baseball.sources.find((s) => s.type === "media")!;
+    expect(media.filter).toBe("sport");
+    expect(isRelevant(media, "Auburn baseball signs 16 including two big-time legacies", "baseball")).toBe(true);
+    expect(isRelevant(media, "Auburn will need its depth against No. 12 Arizona's lottery players", "baseball")).toBe(false);
+    expect(isRelevant(media, "Auburn Football Recruiting Hot Board: Offense", "baseball")).toBe(false);
+    expect(isRelevant(media, "HOOPS: Auburn signs 2 top high school targets in early signing period", "baseball")).toBe(false);
+    expect(SPORTS.football.sources.find((s) => s.type === "media")!.filter).toBe("none");
+  });
+
   it("skips filtering for Auburn-football-only feeds", () => {
     expect(isRelevant(googleSource, "Tigers prep for road trip", "football")).toBe(true);
   });

@@ -55,10 +55,13 @@ function Outcome({ game }: { game: Game }) {
 
 export default async function SchedulePage(props: SportParams) {
   const sport = await sportFromParams(props);
-  const { data: games, isFallback } = await getSchedule(sport.id);
+  const { data: games, isFallback, isEmpty } = await getSchedule(sport.id);
   const finals = games.filter((g) => g.status === "final" && g.result);
   const wins = finals.filter((g) => g.result!.win).length;
   const next = games.find((g) => g.status !== "final");
+  // Between seasons ESPN keeps serving the finished season until the next one is published.
+  const seasonOver = !isFallback && games.length > 0 && !next;
+  const lastYear = seasonOver ? new Date(games[games.length - 1].date).getFullYear() : undefined;
 
   return (
     <>
@@ -71,6 +74,15 @@ export default async function SchedulePage(props: SportParams) {
         )}
       </div>
       {isFallback && <Notice>Live schedule unavailable. Showing placeholder sample data.</Notice>}
+      {isEmpty && (
+        <Notice>ESPN hasn&apos;t published the {sport.name.toLowerCase()} schedule yet. Check back closer to the season.</Notice>
+      )}
+      {seasonOver && (
+        <Notice>
+          The {lastYear} season is over. These are its final results; next season&apos;s schedule hasn&apos;t been
+          published yet.
+        </Notice>
+      )}
 
       {next && (
         <section className="mb-6 rounded-lg bg-navy p-4 text-white">

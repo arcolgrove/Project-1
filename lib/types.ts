@@ -63,4 +63,6 @@ export interface DataResult<T> {
   data: T;
   /** True when live data could not be fetched and bundled sample data is shown. */
   isFallback: boolean;
+  /** True when ESPN answered but has nothing published yet (e.g. off-season); `data` is empty. */
+  isEmpty?: boolean;
 }
