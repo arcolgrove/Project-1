@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Auburn Sports Hub", template: "%s · Auburn Sports Hub" },
-  description: "The latest Auburn Tigers football and men's basketball news from across the web, plus rosters and schedules.",
+  description: "The latest Auburn Tigers football, men's basketball and baseball news from across the web, plus rosters and schedules.",
   appleWebApp: { capable: true, title: "AU Sports", statusBarStyle: "black-translucent" },
 };
 

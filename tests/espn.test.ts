@@ -141,6 +141,19 @@ describe("fallback", () => {
     expect(roster.data.every((p) => ["Guards", "Forwards", "Centers"].includes(p.positionGroup))).toBe(true);
   });
 
+  it("serves baseball sample data from the baseball endpoint's fallback", async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new Error("network down"));
+    vi.stubGlobal("fetch", fetchMock);
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const [roster, schedule] = await Promise.all([getRoster("baseball"), getSchedule("baseball")]);
+    const urls = fetchMock.mock.calls.map((c) => String(c[0]));
+    expect(urls).toContain("https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/2/roster");
+    expect(roster.isFallback && schedule.isFallback).toBe(true);
+    expect(new Set(roster.data.map((p) => p.positionGroup))).toEqual(
+      new Set(["Pitchers", "Catchers", "Infielders", "Outfielders", "Utility"]),
+    );
+  });
+
   it("uses live data when ESPN responds", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Response.json(rosterPayload)));
     const roster = await getRoster("football");

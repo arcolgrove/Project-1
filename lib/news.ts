@@ -29,7 +29,6 @@ const parser: Parser<Record<string, unknown>, FeedItem> = new Parser({
  * add their own markers (see `otherTopics`).
  */
 const NON_SITE_TOPICS = [
-  "baseball",
   "softball",
   "soccer",
   "volleyball",

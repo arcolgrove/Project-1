@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import baseballRoster from "@/data/baseball-roster.json";
 import basketballRoster from "@/data/basketball-roster.json";
 import footballRoster from "@/data/football-roster.json";
 import { isSportId, SPORT_IDS, SPORTS } from "@/lib/sports";
@@ -21,6 +22,14 @@ describe("sports config", () => {
     }
   });
 
+  it("maps every baseball position to a listed group", () => {
+    const expected: Record<string, string> = { RHP: "Pitchers", LHP: "Pitchers", P: "Pitchers", C: "Catchers", SS: "Infielders", "1B": "Infielders", CF: "Outfielders", OF: "Outfielders", DH: "Utility", UT: "Utility" };
+    for (const [pos, group] of Object.entries(expected)) {
+      expect(SPORTS.baseball.groupOf(pos)).toBe(group);
+    }
+    expect(SPORTS.baseball.positionGroups).toContain(SPORTS.baseball.groupOf("XYZ"));
+  });
+
   it("maps football units to listed groups", () => {
     for (const unit of ["offense", "defense", "specialTeam"]) {
       expect(SPORTS.football.positionGroups).toContain(SPORTS.football.groupOf("QB", unit));
@@ -30,11 +39,13 @@ describe("sports config", () => {
   it("sample rosters only use their sport's groups", () => {
     expect(footballRoster.every((p) => SPORTS.football.positionGroups.includes(p.positionGroup))).toBe(true);
     expect(basketballRoster.every((p) => SPORTS.basketball.positionGroups.includes(p.positionGroup))).toBe(true);
+    expect(baseballRoster.every((p) => SPORTS.baseball.positionGroups.includes(p.positionGroup))).toBe(true);
   });
 
   it("recognizes sport ids", () => {
     expect(isSportId("football")).toBe(true);
     expect(isSportId("basketball")).toBe(true);
-    expect(isSportId("baseball")).toBe(false);
+    expect(isSportId("baseball")).toBe(true);
+    expect(isSportId("softball")).toBe(false);
   });
 });

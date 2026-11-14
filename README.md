@@ -1,15 +1,15 @@
 # Auburn Sports Hub
 
-A web app (installable on phones as a PWA) that pulls the latest Auburn Tigers **football** and **men's basketball** news from across the web, along with each team's roster and schedule. A switch in the header moves between the sports and keeps you on the same tab.
+A web app (installable on phones as a PWA) that pulls the latest Auburn Tigers **football**, **men's basketball** and **baseball** news from across the web, along with each team's roster and schedule. A switch in the header moves between the sports and keeps you on the same tab.
 
 ## Features
-Each sport has the same three pages, under `/football/...` and `/basketball/...` (`/` goes to football):
+Each sport has the same three pages, under `/football/...`, `/basketball/...` and `/baseball/...` (`/` goes to football):
 - **News** (`/[sport]`): aggregates free RSS/Atom feeds from media outlets, the official athletics site, Reddit, and YouTube.
   - Stories are filtered for relevance to that sport, de-duplicated, sorted newest first, and refreshed every 10 minutes.
   - Filter by source type (Media / Official / Social / Video) or search headlines.
   - Every headline links to the original publisher.
 - **Schedule** (`/[sport]/schedule`): full season with next-game card, results, record, TV, and venue.
-- **Roster** (`/[sport]/roster`): searchable roster, filterable by Offense / Defense / Special Teams or Guards / Forwards / Centers.
+- **Roster** (`/[sport]/roster`): searchable roster, filterable by position group (Offense / Defense / Special Teams; Guards / Forwards / Centers; Pitchers / Catchers / Infielders / Outfielders / Utility).
 - **JSON API** (`/api/[sport]/news`): the aggregated feed, for future mobile clients. `/api/news` is the football feed.
 
 Rosters and schedules come from ESPN's public site API (team id `2` for every sport). If ESPN can't be reached, the pages show clearly labeled placeholder sample data from `data/`.

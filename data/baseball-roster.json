@@ -1,0 +1,154 @@
+[
+  {
+    "id": "sample-bsb-1",
+    "name": "Sample Player 1",
+    "number": "1",
+    "position": "RHP",
+    "positionGroup": "Pitchers",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bsb-2",
+    "name": "Sample Player 2",
+    "number": "3",
+    "position": "LHP",
+    "positionGroup": "Pitchers",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bsb-3",
+    "name": "Sample Player 3",
+    "number": "5",
+    "position": "RHP",
+    "positionGroup": "Pitchers",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bsb-4",
+    "name": "Sample Player 4",
+    "number": "7",
+    "position": "RHP",
+    "positionGroup": "Pitchers",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bsb-5",
+    "name": "Sample Player 5",
+    "number": "9",
+    "position": "LHP",
+    "positionGroup": "Pitchers",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bsb-6",
+    "name": "Sample Player 6",
+    "number": "11",
+    "position": "RHP",
+    "positionGroup": "Pitchers",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bsb-7",
+    "name": "Sample Player 7",
+    "number": "13",
+    "position": "C",
+    "positionGroup": "Catchers",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bsb-8",
+    "name": "Sample Player 8",
+    "number": "15",
+    "position": "C",
+    "positionGroup": "Catchers",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bsb-9",
+    "name": "Sample Player 9",
+    "number": "17",
+    "position": "1B",
+    "positionGroup": "Infielders",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bsb-10",
+    "name": "Sample Player 10",
+    "number": "19",
+    "position": "2B",
+    "positionGroup": "Infielders",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bsb-11",
+    "name": "Sample Player 11",
+    "number": "21",
+    "position": "SS",
+    "positionGroup": "Infielders",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bsb-12",
+    "name": "Sample Player 12",
+    "number": "23",
+    "position": "3B",
+    "positionGroup": "Infielders",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bsb-13",
+    "name": "Sample Player 13",
+    "number": "25",
+    "position": "INF",
+    "positionGroup": "Infielders",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bsb-14",
+    "name": "Sample Player 14",
+    "number": "27",
+    "position": "OF",
+    "positionGroup": "Outfielders",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bsb-15",
+    "name": "Sample Player 15",
+    "number": "29",
+    "position": "CF",
+    "positionGroup": "Outfielders",
+    "classYear": "Junior"
+  },
+  {
+    "id": "sample-bsb-16",
+    "name": "Sample Player 16",
+    "number": "31",
+    "position": "OF",
+    "positionGroup": "Outfielders",
+    "classYear": "Senior"
+  },
+  {
+    "id": "sample-bsb-17",
+    "name": "Sample Player 17",
+    "number": "33",
+    "position": "RF",
+    "positionGroup": "Outfielders",
+    "classYear": "Freshman"
+  },
+  {
+    "id": "sample-bsb-18",
+    "name": "Sample Player 18",
+    "number": "35",
+    "position": "DH",
+    "positionGroup": "Utility",
+    "classYear": "Sophomore"
+  },
+  {
+    "id": "sample-bsb-19",
+    "name": "Sample Player 19",
+    "number": "37",
+    "position": "UT",
+    "positionGroup": "Utility",
+    "classYear": "Junior"
+  }
+]
