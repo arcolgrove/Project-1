@@ -1,11 +1,18 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { dedupeAndSort, getNews, isRelevant, isSportStory, parseFeed } from "@/lib/news";
 import { SPORTS } from "@/lib/sports";
 import type { NewsItem, NewsSource } from "@/lib/types";
 
 const fixture = (name: string) => readFileSync(join(__dirname, "fixtures", name), "utf8");
+
+// Fixture stories are from October 2026; pin "now" so they stay within MAX_AGE_DAYS.
+beforeAll(() => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-12T00:00:00Z"));
+});
+afterAll(() => vi.useRealTimers());
 
 const googleSource: NewsSource = {
   id: "google-news",
@@ -33,6 +40,15 @@ describe("parseFeed", () => {
       publishedAt: "2026-10-10T14:00:00.000Z",
     });
     expect(items[0].summary).toBeUndefined();
+  });
+
+  it("drops stories older than MAX_AGE_DAYS", async () => {
+    vi.setSystemTime(new Date("2026-12-01T00:00:00Z"));
+    try {
+      await expect(parseFeed(googleSource, fixture("google-news.xml"), "football")).resolves.toEqual([]);
+    } finally {
+      vi.setSystemTime(new Date("2026-10-12T00:00:00Z"));
+    }
   });
 
   it("treats a feed with no entries as a failure", async () => {
@@ -134,6 +150,14 @@ describe("isRelevant", () => {
     expect(isRelevant(media, "Auburn Football Recruiting Hot Board: Offense", "baseball")).toBe(false);
     expect(isRelevant(media, "HOOPS: Auburn signs 2 top high school targets in early signing period", "baseball")).toBe(false);
     expect(SPORTS.football.sources.find((s) => s.type === "media")!.filter).toBe("none");
+  });
+
+  it("drops other schools named Auburn, even from unfiltered sources", () => {
+    expect(isRelevant(googleSource, "Gallery: Auburn football wins Section III, Class A championship", "football")).toBe(false);
+    expect(isRelevant(googleSource, "Video: Auburn football gets police and fire escort home after Section III title", "football")).toBe(false);
+    expect(isRelevant(googleSource, "Millbury vs Auburn Baseball - Apr 5, 2027", "baseball")).toBe(false);
+    expect(isRelevant(googleSource, "Auburn High School wins region title", "football")).toBe(false);
+    expect(isRelevant(googleSource, "Auburn football highlights vs. Mississippi State", "football")).toBe(true);
   });
 
   it("skips filtering for Auburn-football-only feeds", () => {

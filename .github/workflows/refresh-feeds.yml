@@ -1,0 +1,42 @@
+# Keeps the live site's news, schedules and rosters fresh.
+#
+# Vercel only refreshes a cached page after someone requests it past its
+# revalidate time, and that first visitor still gets the old copy. Requesting
+# every page on a schedule means real visitors always get a recent copy.
+name: Refresh feeds
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      # Override with a repository variable if the site moves to another domain.
+      SITE_URL: ${{ vars.SITE_URL || 'https://auburn-football-news-theta-fawn.vercel.app' }}
+    steps:
+      - name: Request every page (starts background refreshes)
+        run: |
+          for sport in football basketball baseball; do
+            for path in "/$sport" "/$sport/schedule" "/$sport/roster" "/api/$sport/news"; do
+              curl -sS -o /dev/null -w "%{http_code} $path\n" --max-time 30 "$SITE_URL$path" || true
+            done
+          done
+      - name: Confirm the news feeds are fresh
+        run: |
+          sleep 20
+          for sport in football basketball baseball; do
+            curl -sS --max-time 30 "$SITE_URL/api/$sport/news" | node -e '
+              let s = "";
+              process.stdin.on("data", (d) => (s += d)).on("end", () => {
+                const d = JSON.parse(s);
+                const minutes = Math.round((Date.now() - new Date(d.fetchedAt)) / 60000);
+                console.log(`${process.argv[1]}: fetched ${minutes} min ago, ${d.items.length} stories, failed: ${d.failedSources.join(", ") || "none"}`);
+              });
+            ' "$sport"
+          done
