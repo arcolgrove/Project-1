@@ -66,6 +66,12 @@ describe("isSportStory", () => {
     expect(isSportStory("Iron Bowl week", "basketball")).toBe(false);
     expect(isSportStory("Game 1 ✅ #Auburn #AuburnBasketball #WarEagle", "basketball")).toBe(true);
   });
+
+  it("matches baseball terms", () => {
+    expect(isSportStory("Tigers walk it off in the ninth inning at Plainsman Park", "baseball")).toBe(true);
+    expect(isSportStory("Fall ball recap #AuburnBaseball", "baseball")).toBe(true);
+    expect(isSportStory("Four-star QB commits to Auburn", "baseball")).toBe(false);
+  });
 });
 
 describe("isRelevant", () => {
@@ -109,6 +115,15 @@ describe("isRelevant", () => {
     expect(isRelevant(googleSource, "Peterson's double-double helps Auburn women defeat USM", "basketball")).toBe(false);
     expect(isRelevant(googleSource, "AUBURN vs. SOUTHERN MISS Highlights | Women's Basketball", "basketball")).toBe(false);
     expect(isRelevant(googleSource, "Auburn roars to 92-59 win over Southeastern Louisiana", "basketball")).toBe(true);
+  });
+
+  it("keeps baseball separate from the other sports and from softball", () => {
+    expect(isRelevant(googleSource, "Auburn softball pitcher tosses no-hitter", "baseball")).toBe(false);
+    expect(isRelevant(redditSource, "Auburn baseball lands top transfer arm", "football")).toBe(false);
+    expect(isRelevant(redditSource, "Auburn baseball lands top transfer arm", "basketball")).toBe(false);
+    expect(isRelevant(redditSource, "Auburn baseball lands top transfer arm", "baseball")).toBe(true);
+    expect(isRelevant(redditSource, "Auburn football depth chart released", "baseball")).toBe(false);
+    expect(isRelevant(broad, "Auburn vs. Arkansas Preview: A MUST-WIN for the Tigers?", "baseball")).toBe(false);
   });
 
   it("skips filtering for Auburn-football-only feeds", () => {

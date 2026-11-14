@@ -1,6 +1,6 @@
 import type { NewsSource } from "./types";
 
-export const SPORT_IDS = ["football", "basketball"] as const;
+export const SPORT_IDS = ["football", "basketball", "baseball"] as const;
 export type SportId = (typeof SPORT_IDS)[number];
 
 export interface SportConfig {
@@ -107,6 +107,25 @@ const BASKETBALL_GROUPS: Record<string, string> = {
   C: "Centers",
 };
 
+const BASEBALL_GROUPS: Record<string, string> = {
+  P: "Pitchers",
+  RHP: "Pitchers",
+  LHP: "Pitchers",
+  SP: "Pitchers",
+  RP: "Pitchers",
+  C: "Catchers",
+  "1B": "Infielders",
+  "2B": "Infielders",
+  "3B": "Infielders",
+  SS: "Infielders",
+  IF: "Infielders",
+  INF: "Infielders",
+  OF: "Outfielders",
+  LF: "Outfielders",
+  CF: "Outfielders",
+  RF: "Outfielders",
+};
+
 export const SPORTS: Record<SportId, SportConfig> = {
   football: {
     id: "football",
@@ -186,6 +205,46 @@ export const SPORTS: Record<SportId, SportConfig> = {
     excludes: ["women's basketball", "womens basketball", "women’s basketball", "wbb", "auburn women"],
     positionGroups: ["Guards", "Forwards", "Centers"],
     groupOf: (position) => BASKETBALL_GROUPS[position.toUpperCase()] ?? "Forwards",
+  },
+  baseball: {
+    id: "baseball",
+    name: "Baseball",
+    shortName: "Baseball",
+    espnPath: "baseball/college-baseball",
+    sources: sourcesFor("baseball", "baseball"),
+    // Words other sports share ("recruit", "regional", "SEC tournament") are left out
+    // so their stories don't land here.
+    terms: [
+      "baseball",
+      "plainsman park",
+      "pitcher",
+      "pitchers",
+      "pitching",
+      "bullpen",
+      "inning",
+      "innings",
+      "home run",
+      "homer",
+      "strikeout",
+      "strikeouts",
+      "rbi",
+      "no-hitter",
+      "college world series",
+      "cws",
+      "omaha",
+      "super regional",
+      "ncaa regional",
+      "mlb draft",
+      "fall ball",
+    ],
+    markers: ["baseball"],
+    auburnPattern: /\bauburn\b|\bwar eagle\b/i,
+    lenient: false,
+    // Softball stories use the same words (pitcher, home run, Omaha).
+    excludes: ["softball"],
+    positionGroups: ["Pitchers", "Catchers", "Infielders", "Outfielders", "Utility"],
+    // DH, UT and anything unrecognized are grouped as Utility.
+    groupOf: (position) => BASEBALL_GROUPS[position.toUpperCase()] ?? "Utility",
   },
 };
 

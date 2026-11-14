@@ -1,3 +1,5 @@
+import baseballRoster from "@/data/baseball-roster.json";
+import baseballSchedule from "@/data/baseball-schedule.json";
 import basketballRoster from "@/data/basketball-roster.json";
 import basketballSchedule from "@/data/basketball-schedule.json";
 import footballRoster from "@/data/football-roster.json";
@@ -14,6 +16,7 @@ const teamUrl = (sport: SportId) =>
 const FALLBACK: Record<SportId, { roster: Player[]; schedule: Game[] }> = {
   football: { roster: footballRoster, schedule: footballSchedule as Game[] },
   basketball: { roster: basketballRoster, schedule: basketballSchedule as Game[] },
+  baseball: { roster: baseballRoster, schedule: baseballSchedule as Game[] },
 };
 const TIMEOUT_MS = 8000;
 

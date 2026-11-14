@@ -1,0 +1,106 @@
+[
+  {
+    "id": "sample-bsb-game-1",
+    "date": "2027-02-13T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent A",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-2",
+    "date": "2027-02-20T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent B",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-3",
+    "date": "2027-02-27T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent C",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-4",
+    "date": "2027-03-06T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent D",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-5",
+    "date": "2027-03-13T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent E",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-6",
+    "date": "2027-03-20T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent F",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-7",
+    "date": "2027-03-27T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent G",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-8",
+    "date": "2027-04-03T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent H",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-9",
+    "date": "2027-04-10T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent I",
+    "homeAway": "away",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-10",
+    "date": "2027-04-17T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent J",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-11",
+    "date": "2027-04-24T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent K",
+    "homeAway": "home",
+    "venue": "Plainsman Park · Auburn, AL",
+    "status": "scheduled"
+  },
+  {
+    "id": "sample-bsb-game-12",
+    "date": "2027-05-01T19:00:00.000Z",
+    "timeTbd": true,
+    "opponent": "Opponent L",
+    "homeAway": "away",
+    "status": "scheduled"
+  }
+]
