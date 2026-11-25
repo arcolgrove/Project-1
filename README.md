@@ -34,7 +34,10 @@ Everything that differs between sports lives in `lib/sports.ts`:
 Each source has a `type` (`media`, `official`, `social`, `video`) and a `filter` (documented on `NewsSource` in `lib/types.ts`) that controls how strictly items are checked for being about that sport. To add a sport, add an entry there, add sample data in `data/`, and add it to the `SPORTS` list in `public/sw.js`. Outlets whose own feeds fail from Vercel are reached through site-scoped Google News searches.
 
 ## Keeping it fresh
-Pages are cached and refreshed at most every 10 minutes (news), hourly (schedules) or daily (rosters), but Vercel only refreshes a page when someone visits it. `.github/workflows/refresh-feeds.yml` requests every page every 10 minutes, so real visitors always get a recent copy. Run it by hand from the repo's Actions tab ("Refresh feeds" → Run workflow). If the site moves to another domain, set a `SITE_URL` repository variable.
+Pages are cached and refreshed at most every 10 minutes (news), hourly (schedules) or daily (rosters), but Vercel only refreshes a page when someone visits it.
+- **`/api/refresh`:** requests every page on the site, which starts those refreshes, and returns a short summary.
+- **Pinger:** point an uptime/cron service such as cron-job.org at `/api/refresh` every 10 minutes. The news pages themselves are too large for most of these services.
+- **Backup:** `.github/workflows/refresh-feeds.yml` calls the same endpoint on a schedule, but GitHub runs frequent schedules only every few hours. Run it by hand from the Actions tab ("Refresh feeds" → Run workflow). If the site moves to another domain, set a `SITE_URL` repository variable.
 
 ## Offline and install
 `public/sw.js` is a small service worker, registered in production builds only (`components/RegisterServiceWorker.tsx`).
