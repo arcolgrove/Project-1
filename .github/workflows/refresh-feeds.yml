@@ -21,12 +21,7 @@ jobs:
       SITE_URL: ${{ vars.SITE_URL || 'https://auburn-football-news-theta-fawn.vercel.app' }}
     steps:
       - name: Request every page (starts background refreshes)
-        run: |
-          for sport in football basketball baseball; do
-            for path in "/$sport" "/$sport/schedule" "/$sport/roster" "/api/$sport/news"; do
-              curl -sS -o /dev/null -w "%{http_code} $path\n" --max-time 30 "$SITE_URL$path" || true
-            done
-          done
+        run: curl -sS --max-time 60 "$SITE_URL/api/refresh"; echo
       - name: Confirm the news feeds are fresh
         run: |
           sleep 20
